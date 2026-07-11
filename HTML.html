@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:title" content="Ficha Cadastral – Projeto Portfólio" />
+  <meta property="og:description" content="Cadastre-se como cliente em poucos minutos. Formulário de exemplo desenvolvido como projeto de portfólio." />
+  <meta property="og:type" content="website" />
+  <title>Ficha Cadastral – Projeto Portfólio</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eef2f7;
+      color: #1a2a3a;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a56a0;
+      color: white;
+      padding: 24px 32px;
+      border-bottom: 4px solid #0e3d7a;
+    }
+
+    header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.3px; }
+    header p { margin-top: 4px; font-size: 0.88rem; opacity: 0.8; }
+
+    .container {
+      max-width: 720px;
+      margin: 32px auto;
+      padding: 0 16px 60px;
+    }
+
+    /* STEPS */
+    .steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .step { display: flex; align-items: center; gap: 8px; flex: 1; }
+
+    .step-circle {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: #c8d8e8;
+      color: #6b8099;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .step-circle.active { background: #1a56a0; color: white; }
+    .step-circle.done   { background: #2a7a4f; color: white; }
+
+    .step-label { font-size: 0.78rem; color: #6b8099; font-weight: 600; white-space: nowrap; }
+    .step-label.active { color: #1a56a0; }
+
+    .step-line { flex: 1; height: 2px; background: #c8d8e8; margin: 0 8px; }
+
+    /* CARD */
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 8px rgba(26,86,160,0.07);
+      padding: 24px 28px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1a56a0;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e4edf5;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* TYPE SELECTOR */
+    .type-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .type-option {
+      border: 2px solid #c8d8e8;
+      border-radius: 6px;
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .type-option:hover { border-color: #1a56a0; background: #f0f5fb; }
+    .type-option.selected { border-color: #1a56a0; background: #e4edf5; }
+    .type-option input[type="radio"] { display: none; }
+
+    .type-icon {
+      display: block;
+      margin: 0 auto 8px;
+      width: 28px; height: 28px;
+    }
+
+    .type-label { font-size: 0.82rem; font-weight: 600; color: #1a2a3a; }
+
+    /* FIELDS */
+    .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field-group.full { grid-template-columns: 1fr; }
+    .field-group.three { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label { font-size: 0.8rem; font-weight: 600; color: #4a5f72; }
+    label .required { color: #c0392b; margin-left: 2px; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+      padding: 9px 11px;
+      border: 1.5px solid #c0d0e0;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      color: #1a2a3a;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1a56a0;
+      box-shadow: 0 0 0 3px rgba(26,86,160,0.09);
+    }
+
+    .field-error { font-size: 0.75rem; color: #c0392b; display: none; }
+    .field-error.visible { display: block; }
+
+    /* RADIO */
+    .radio-group { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2px; }
+    .radio-option { display: flex; align-items: center; gap: 7px; cursor: pointer; font-size: 0.88rem; color: #1a2a3a; }
+    .radio-option input[type="radio"] { accent-color: #1a56a0; width: 15px; height: 15px; cursor: pointer; }
+
+    /* SECTION */
+    .section-block { display: none; }
+    .section-block.visible { display: block; }
+
+    /* DIVIDER */
+    .divider { height: 1px; background: #e4edf5; margin: 18px 0; }
+
+    /* UPLOAD */
+    .upload-area {
+      border: 2px dashed #c0d0e0;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .upload-area:hover { border-color: #1a56a0; background: #f0f5fb; }
+
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    .upload-icon {
+      display: block; margin: 0 auto 8px;
+      width: 32px; height: 32px; opacity: 0.5;
+    }
+
+    .upload-text { font-size: 0.86rem; color: #4a5f72; }
+    .upload-text strong { color: #1a56a0; }
+    .upload-hint { font-size: 0.74rem; color: #8a9ab0; margin-top: 4px; }
+
+    .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+
+    .file-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #f0f5fb; border-radius: 5px; padding: 7px 11px;
+      font-size: 0.8rem; color: #1a2a3a;
+    }
+
+    .file-item button {
+      background: none; border: none; color: #c0392b;
+      cursor: pointer; font-size: 0.9rem; padding: 0 4px;
+    }
+
+    /* BUTTONS */
+    .btn-submit {
+      width: 100%; padding: 13px;
+      background: #1a56a0; color: white;
+      border: none; border-radius: 6px;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
+      margin-top: 8px; letter-spacing: 0.3px;
+    }
+
+    .btn-submit:hover { background: #0e3d7a; }
+    .btn-submit:disabled { background: #8aabcc; cursor: not-allowed; }
+
+    /* ALERT */
+    .alert { padding: 11px 15px; border-radius: 5px; font-size: 0.86rem; margin-bottom: 14px; display: none; }
+    .alert.error { background: #fdecea; border: 1px solid #e57373; color: #b71c1c; display: block; }
+
+    /* SUCCESS */
+    .success-screen { display: none; text-align: center; padding: 60px 32px; }
+    .success-screen.visible { display: block; }
+    .success-screen h2 { color: #1a56a0; font-size: 1.4rem; margin-bottom: 8px; }
+    .success-screen p { color: #4a5f72; font-size: 0.92rem; }
+    .success-icon { font-size: 3rem; margin-bottom: 14px; color: #2a7a4f; }
+
+    /* LGPD */
+    .lgpd-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f0f5fb;
+      border: 1.5px solid #c0d0e0;
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .lgpd-box input[type="checkbox"] {
+      accent-color: #1a56a0;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .lgpd-box label {
+      font-size: 0.82rem;
+      color: #4a5f72;
+      font-weight: 400;
+      cursor: pointer;
+      line-height: 1.5;
+    }
+
+    .lgpd-box label strong {
+      color: #1a2a3a;
+    }
+
+    @media (max-width: 560px) {
+      .card { padding: 18px 14px; }
+      .type-selector { grid-template-columns: 1fr; }
+      .field-group, .field-group.three { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:20px;">
+    <img src="Imagem_portifolio.png" alt="Logo" style="height:56px; width:auto;" />
+    <div>
+      <h1>Ficha Cadastral</h1>
+      <p>Preencha os dados abaixo para realizar seu cadastro como cliente.</p>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-circle active" id="step1-circle">1</div>
+      <span class="step-label active" id="step1-label">Tipo de Cliente</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-circle" id="step2-circle">2</div>
+      <span class="step-label" id="step2-label">Dados Cadastrais</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-circle" id="step3-circle">3</div>
+      <span class="step-label" id="step3-label">Documentos</span>
+    </div>
+  </div>
+
+  <div id="alert-box" class="alert"></div>
+
+ <form id="cadastro-form" action="https://formspree.io/f/xykqzeoj" method="POST" novalidate>
+  <input type="hidden" name="_language" value="pt-BR" />
+
+    <!-- PASSO 1 -->
+    <div id="passo-1">
+      <div class="card">
+        <div class="card-title">Tipo de Cliente</div>
+        <div class="type-selector">
+
+          <label class="type-option" id="opt-pf">
+            <input type="radio" name="tipo_cliente" value="Pessoa Física" />
+            <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="#1a56a0" stroke-width="1.8">
+              <circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            <span class="type-label">Pessoa Física</span>
+          </label>
+
+          <label class="type-option" id="opt-pj">
+            <input type="radio" name="tipo_cliente" value="Pessoa Jurídica" />
+            <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="#1a56a0" stroke-width="1.8">
+              <rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a4 4 0 018 0v2"/>
+            </svg>
+            <span class="type-label">Pessoa Jurídica</span>
+          </label>
+
+          <label class="type-option" id="opt-pr">
+            <input type="radio" name="tipo_cliente" value="Produtor Rural" />
+            <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="#1a56a0" stroke-width="1.8">
+              <path d="M12 2C6 8 4 13 4 16a8 8 0 0016 0c0-3-2-8-8-14z"/>
+            </svg>
+            <span class="type-label">Produtor Rural</span>
+          </label>
+
+        </div>
+        <span class="field-error" id="tipo-error" style="margin-top:10px; display:none;">Selecione o tipo de cliente para continuar.</span>
+      </div>
+      <button type="button" class="btn-submit" onclick="irParaPasso2()">Continuar</button>
+    </div>
+
+    <!-- PASSO 2 -->
+    <div id="passo-2" style="display:none;">
+
+      <!-- PESSOA FÍSICA -->
+      <div id="bloco-pf" class="section-block">
+        <div class="card">
+          <div class="card-title">Pessoa Física</div>
+
+          <div class="field">
+            <label>Nome completo <span class="required">*</span></label>
+            <input type="text" name="Nome" id="pf-nome" placeholder="Nome completo" />
+            <span class="field-error" id="pf-nome-error">Campo obrigatório.</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label>CPF <span class="required">*</span></label>
+              <input type="text" name="CPF" id="pf-cpf" placeholder="000.000.000-00" maxlength="14" />
+              <span class="field-error" id="pf-cpf-error">CPF inválido.</span>
+            </div>
+            <div class="field">
+              <label>Telefone <span class="required">*</span></label>
+              <input type="tel" name="Telefone" id="pf-fone" placeholder="(00) 00000-0000" maxlength="15" />
+              <span class="field-error" id="pf-fone-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>E-mail <span class="required">*</span></label>
+            <input type="email" id="pf-email" placeholder="email@exemplo.com" name="Email_PF" />
+            <span class="field-error" id="pf-email-error">E-mail inválido.</span>
+          </div>
+
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:14px;">Endereço</div>
+
+          <div class="field">
+            <label>Logradouro <span class="required">*</span></label>
+            <input type="text" name="Logradouro" id="pf-logradouro" placeholder="Rua, Avenida, etc." />
+            <span class="field-error" id="pf-logradouro-error">Campo obrigatório.</span>
+          </div>
+
+          <div class="field-group three">
+            <div class="field">
+              <label>CEP</label>
+              <input type="text" name="CEP" id="pf-cep" placeholder="00000-000" maxlength="9" />
+            </div>
+            <div class="field">
+              <label>Número <span class="required">*</span></label>
+              <input type="text" name="Numero" id="pf-numero" placeholder="Nº ou S/N" />
+              <span class="field-error" id="pf-numero-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>Bairro <span class="required">*</span></label>
+              <input type="text" name="Bairro" id="pf-bairro" placeholder="Bairro" />
+              <span class="field-error" id="pf-bairro-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label>Cidade <span class="required">*</span></label>
+              <input type="text" name="Cidade" id="pf-cidade" placeholder="Cidade" />
+              <span class="field-error" id="pf-cidade-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>Estado <span class="required">*</span></label>
+              <select name="Estado" id="pf-estado">
+                <option value="">Selecione</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option selected>SP</option><option>SE</option><option>TO</option>
+              </select>
+              <span class="field-error" id="pf-estado-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Local de Entrega</label>
+            <input type="text" name="Local_Entrega" id="pf-entrega" placeholder="Preencher somente se for diferente do endereço acima" />
+          </div>
+        </div>
+      </div>
+
+      <!-- PESSOA JURÍDICA -->
+      <div id="bloco-pj" class="section-block">
+        <div class="card">
+          <div class="card-title">Pessoa Jurídica</div>
+
+          <div class="field">
+            <label>Razão Social <span class="required">*</span></label>
+            <input type="text" name="Razao_Social" id="pj-razao" placeholder="Razão social da empresa" />
+            <span class="field-error" id="pj-razao-error">Campo obrigatório.</span>
+          </div>
+
+          <div class="field">
+            <label>Nome Fantasia</label>
+            <input type="text" name="Nome_Fantasia" id="pj-fantasia" placeholder="Nome fantasia (se houver)" />
+          </div>
+
+          <div class="field-group three">
+            <div class="field">
+              <label>CNPJ <span class="required">*</span></label>
+              <input type="text" name="CNPJ" id="pj-cnpj" placeholder="00.000.000/0000-00" maxlength="18" />
+              <span class="field-error" id="pj-cnpj-error">CNPJ inválido.</span>
+            </div>
+            <div class="field">
+              <label>Telefone <span class="required">*</span></label>
+              <input type="tel" name="Telefone" id="pj-fone" placeholder="(00) 00000-0000" maxlength="15" />
+              <span class="field-error" id="pj-fone-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>E-mail <span class="required">*</span></label>
+              <input type="email" id="pj-email" placeholder="email@empresa.com" name="Email_PJ" />
+              <span class="field-error" id="pj-email-error">E-mail inválido.</span>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="field">
+            <label>Contribuinte de ICMS? <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option"><input type="radio" name="ICMS" value="Sim" /> Sim</label>
+              <label class="radio-option"><input type="radio" name="ICMS" value="Não" /> Não</label>
+            </div>
+            <span class="field-error" id="pj-icms-error">Selecione uma opção.</span>
+          </div>
+
+          <div class="field">
+            <label>Destino da Mercadoria <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option"><input type="radio" name="Destino" value="Revenda" /> Revenda</label>
+              <label class="radio-option"><input type="radio" name="Destino" value="Uso e Consumo" /> Uso e Consumo</label>
+            </div>
+            <span class="field-error" id="pj-destino-error">Selecione uma opção.</span>
+          </div>
+
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:14px;">Endereço</div>
+
+          <div class="field">
+            <label>Logradouro <span class="required">*</span></label>
+            <input type="text" name="Logradouro" id="pj-logradouro" placeholder="Rua, Avenida, etc." />
+            <span class="field-error" id="pj-logradouro-error">Campo obrigatório.</span>
+          </div>
+
+          <div class="field-group three">
+            <div class="field">
+              <label>CEP</label>
+              <input type="text" name="CEP" id="pj-cep" placeholder="00000-000" maxlength="9" />
+            </div>
+            <div class="field">
+              <label>Número <span class="required">*</span></label>
+              <input type="text" name="Numero" id="pj-numero" placeholder="Nº ou S/N" />
+              <span class="field-error" id="pj-numero-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>Bairro <span class="required">*</span></label>
+              <input type="text" name="Bairro" id="pj-bairro" placeholder="Bairro" />
+              <span class="field-error" id="pj-bairro-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label>Cidade <span class="required">*</span></label>
+              <input type="text" name="Cidade" id="pj-cidade" placeholder="Cidade" />
+              <span class="field-error" id="pj-cidade-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>Estado <span class="required">*</span></label>
+              <select name="Estado" id="pj-estado">
+                <option value="">Selecione</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option selected>SP</option><option>SE</option><option>TO</option>
+              </select>
+              <span class="field-error" id="pj-estado-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Local de Entrega</label>
+            <input type="text" name="Local_Entrega" id="pj-entrega" placeholder="Preencher somente se for diferente do endereço acima" />
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTOR RURAL -->
+      <div id="bloco-pr" class="section-block">
+        <div class="card">
+          <div class="card-title">Produtor Rural</div>
+
+          <div class="field">
+            <label>Nome completo <span class="required">*</span></label>
+            <input type="text" name="Nome" id="pr-nome" placeholder="Nome completo" />
+            <span class="field-error" id="pr-nome-error">Campo obrigatório.</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label>CPF <span class="required">*</span></label>
+              <input type="text" name="CPF" id="pr-cpf" placeholder="000.000.000-00" maxlength="14" />
+              <span class="field-error" id="pr-cpf-error">CPF inválido.</span>
+            </div>
+            <div class="field">
+              <label>Inscrição Estadual <span class="required">*</span></label>
+              <input type="text" name="Inscricao_Estadual" id="pr-ie" placeholder="Inscrição Estadual" />
+              <span class="field-error" id="pr-ie-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label>Telefone <span class="required">*</span></label>
+              <input type="tel" name="Telefone" id="pr-fone" placeholder="(00) 00000-0000" maxlength="15" />
+              <span class="field-error" id="pr-fone-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>E-mail <span class="required">*</span></label>
+              <input type="email" id="pr-email" placeholder="email@exemplo.com" name="Email_PR" />
+              <span class="field-error" id="pr-email-error">E-mail inválido.</span>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="field">
+            <label>Destino da Mercadoria <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option"><input type="radio" name="Destino" value="Revenda" /> Revenda</label>
+              <label class="radio-option"><input type="radio" name="Destino" value="Uso e Consumo" /> Uso e Consumo</label>
+            </div>
+            <span class="field-error" id="pr-destino-error">Selecione uma opção.</span>
+          </div>
+
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:14px;">Endereço</div>
+
+          <div class="field">
+            <label>Logradouro <span class="required">*</span></label>
+            <input type="text" name="Logradouro" id="pr-logradouro" placeholder="Rua, Avenida, etc." />
+            <span class="field-error" id="pr-logradouro-error">Campo obrigatório.</span>
+          </div>
+
+          <div class="field-group three">
+            <div class="field">
+              <label>CEP</label>
+              <input type="text" name="CEP" id="pr-cep" placeholder="00000-000" maxlength="9" />
+            </div>
+            <div class="field">
+              <label>Número <span class="required">*</span></label>
+              <input type="text" name="Numero" id="pr-numero" placeholder="Nº ou S/N" />
+              <span class="field-error" id="pr-numero-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>Bairro <span class="required">*</span></label>
+              <input type="text" name="Bairro" id="pr-bairro" placeholder="Bairro" />
+              <span class="field-error" id="pr-bairro-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label>Cidade <span class="required">*</span></label>
+              <input type="text" name="Cidade" id="pr-cidade" placeholder="Cidade" />
+              <span class="field-error" id="pr-cidade-error">Campo obrigatório.</span>
+            </div>
+            <div class="field">
+              <label>Estado <span class="required">*</span></label>
+              <select name="Estado" id="pr-estado">
+                <option value="">Selecione</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option selected>SP</option><option>SE</option><option>TO</option>
+              </select>
+              <span class="field-error" id="pr-estado-error">Campo obrigatório.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Local de Entrega</label>
+            <input type="text" name="Local_Entrega" id="pr-entrega" placeholder="Preencher somente se for diferente do endereço acima" />
+          </div>
+        </div>
+      </div>
+
+      <div class="lgpd-box" onclick="document.getElementById('lgpd-check').click()">
+        <input type="checkbox" id="lgpd-check" onclick="event.stopPropagation()" />
+        <label for="lgpd-check">
+          Concordo que meus dados pessoais sejam coletados e utilizados pela <strong>[Nome da Empresa]</strong> para fins de cadastro comercial, conforme a <strong>Lei Geral de Proteção de Dados (LGPD – Lei nº 13.709/2018)</strong>.
+        </label>
+      </div>
+      <span class="field-error" id="lgpd-error" style="margin-top:6px;">Você precisa aceitar para continuar.</span>
+
+      <div style="display:flex; gap:10px;">
+        <button type="button" class="btn-submit" style="background:#6b8099; flex:0 0 110px;" onclick="voltarPasso1()">Voltar</button>
+        <button type="button" class="btn-submit" onclick="irParaPasso3()">Continuar</button>
+      </div>
+    </div>
+
+    <!-- PASSO 3 -->
+    <div id="passo-3" style="display:none;">
+      <div class="card">
+        <div class="card-title">Documentos</div>
+        <p style="font-size:0.88rem; color:#4a5f72; margin-bottom:18px;">
+          Após enviar o cadastro, encaminhe os documentos necessários (RG, CPF, Contrato Social, etc.) para o e-mail abaixo. Identifique o e-mail com seu nome ou razão social.
+        </p>
+        <div style="background:#e4edf5; border-radius:6px; padding:16px 20px; display:flex; align-items:center; gap:12px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56a0" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span style="font-size:0.95rem; font-weight:700; color:#1a56a0;">seuemail@dominio.com</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button type="button" class="btn-submit" style="background:#6b8099; flex:0 0 110px;" onclick="voltarPasso2()">Voltar</button>
+        <button type="submit" class="btn-submit" id="btn-enviar">Enviar Cadastro</button>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Cadastro enviado com sucesso</h2>
+    <p>Seus dados foram recebidos.<br>Nossa equipe entrará em contato em breve.</p>
+  </div>
+
+</div>
+
+<script>
+  let tipoSelecionado = null;
+
+  // SELEÇÃO DE TIPO
+  document.querySelectorAll('.type-option input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+      document.querySelectorAll('.type-option').forEach(el => el.classList.remove('selected'));
+      this.closest('.type-option').classList.add('selected');
+      tipoSelecionado = this.value === 'Pessoa Física' ? 'pf' : this.value === 'Pessoa Jurídica' ? 'pj' : 'pr';
+    });
+  });
+
+  // MÁSCARAS
+  function mascararCPF(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 11);
+    v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    input.value = v;
+  }
+
+  function mascararCNPJ(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 14);
+    v = v.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+         .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+    input.value = v;
+  }
+
+  function mascararFone(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 11);
+    v = v.length <= 10
+      ? v.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2')
+      : v.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
+    input.value = v;
+  }
+
+  function mascararCEP(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 8).replace(/(\d{5})(\d)/, '$1-$2');
+    input.value = v;
+  }
+
+  ['pf-cpf','pr-cpf'].forEach(id => { const el = document.getElementById(id); if(el) el.addEventListener('input', () => mascararCPF(el)); });
+  const cnpjEl = document.getElementById('pj-cnpj'); if(cnpjEl) cnpjEl.addEventListener('input', () => mascararCNPJ(cnpjEl));
+  ['pf-fone','pj-fone','pr-fone'].forEach(id => { const el = document.getElementById(id); if(el) el.addEventListener('input', () => mascararFone(el)); });
+
+  ['pf-cep','pj-cep','pr-cep'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => mascararCEP(el));
+  });
+
+  // NAVEGAÇÃO
+  function atualizarSteps(passo) {
+    for (let i = 1; i <= 3; i++) {
+      const c = document.getElementById(`step${i}-circle`);
+      const l = document.getElementById(`step${i}-label`);
+      c.classList.remove('active','done'); l.classList.remove('active');
+      if (i < passo) { c.classList.add('done'); c.textContent = '✓'; }
+      else if (i === passo) { c.classList.add('active'); c.textContent = i; l.classList.add('active'); }
+      else { c.textContent = i; }
+    }
+  }
+
+  function irParaPasso2() {
+    if (!tipoSelecionado) { document.getElementById('tipo-error').style.display = 'block'; return; }
+    document.getElementById('tipo-error').style.display = 'none';
+    document.getElementById('passo-1').style.display = 'none';
+    document.getElementById('passo-2').style.display = 'block';
+    ['bloco-pf','bloco-pj','bloco-pr'].forEach(id => document.getElementById(id).classList.remove('visible'));
+    document.getElementById(`bloco-${tipoSelecionado}`).classList.add('visible');
+    atualizarSteps(2); window.scrollTo(0,0);
+  }
+
+  function voltarPasso1() {
+    document.getElementById('passo-2').style.display = 'none';
+    document.getElementById('passo-1').style.display = 'block';
+    atualizarSteps(1); window.scrollTo(0,0);
+  }
+
+  function irParaPasso3() {
+    if (!validarPasso2()) return;
+    const lgpd = document.getElementById('lgpd-check');
+    const lgpdError = document.getElementById('lgpd-error');
+    if (!lgpd.checked) {
+      lgpdError.classList.add('visible');
+      lgpd.closest('.lgpd-box').style.borderColor = '#c0392b';
+      return;
+    }
+    lgpdError.classList.remove('visible');
+    lgpd.closest('.lgpd-box').style.borderColor = '#c0d0e0';
+    document.getElementById('passo-2').style.display = 'none';
+    document.getElementById('passo-3').style.display = 'block';
+    atualizarSteps(3); window.scrollTo(0,0);
+  }
+
+  function voltarPasso2() {
+    document.getElementById('passo-3').style.display = 'none';
+    document.getElementById('passo-2').style.display = 'block';
+    atualizarSteps(2); window.scrollTo(0,0);
+  }
+
+  // BLOQUEIA ENTER DE AVANÇAR/ENVIAR SEM VALIDAÇÃO
+  document.getElementById('cadastro-form').addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    if (e.target.tagName === 'TEXTAREA') return; // permite Enter normalmente em textarea, se houver
+
+    // Sempre bloqueia o comportamento padrão do Enter (que tentaria submeter o form)
+    e.preventDefault();
+
+    if (document.getElementById('passo-1').style.display !== 'none') {
+      irParaPasso2();
+    } else if (document.getElementById('passo-2').style.display !== 'none') {
+      // Se o Enter foi pressionado num select, evita disparar validação a cada troca de UF
+      if (e.target.tagName === 'SELECT') return;
+      irParaPasso3();
+    }
+    // No passo 3 não há campos de texto, então não faz nada especial aqui
+  });
+
+  // VALIDAÇÃO
+  function mostrarErro(id, show) { const el = document.getElementById(id); if(el) el.classList.toggle('visible', show); }
+  function campoVazio(id) { const el = document.getElementById(id); return !el || el.value.trim() === ''; }
+  function emailValido(id) { const el = document.getElementById(id); return el && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()); }
+  function cpfValido(id) {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    const cpf = el.value.replace(/\D/g, '');
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    let soma = 0;
+    for (let i = 0; i < 9; i++) soma += parseInt(cpf[i]) * (10 - i);
+    let r = (soma * 10) % 11;
+    if (r === 10 || r === 11) r = 0;
+    if (r !== parseInt(cpf[9])) return false;
+    soma = 0;
+    for (let i = 0; i < 10; i++) soma += parseInt(cpf[i]) * (11 - i);
+    r = (soma * 10) % 11;
+    if (r === 10 || r === 11) r = 0;
+    return r === parseInt(cpf[10]);
+  }
+
+  function cnpjValido(id) {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    const cnpj = el.value.replace(/\D/g, '');
+    if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
+    const calc = (c, l) => {
+      let s = 0, p = l - 7;
+      for (let i = 0; i < l; i++) { s += parseInt(c[i]) * p--; if (p < 2) p = 9; }
+      const r = s % 11;
+      return r < 2 ? 0 : 11 - r;
+    };
+    return calc(cnpj, 12) === parseInt(cnpj[12]) && calc(cnpj, 13) === parseInt(cnpj[13]);
+  }
+  function radioSelecionado(name) { return !!document.querySelector(`input[name="${name}"]:checked`); }
+
+  function validarPasso2() {
+    let ok = true;
+    const v = (campo, erro, valido) => { mostrarErro(erro, !valido); if(!valido) ok = false; };
+
+    if (tipoSelecionado === 'pf') {
+      v('pf-nome','pf-nome-error',!campoVazio('pf-nome'));
+      v('pf-cpf','pf-cpf-error',cpfValido('pf-cpf'));
+      v('pf-fone','pf-fone-error',!campoVazio('pf-fone'));
+      v('pf-email','pf-email-error',emailValido('pf-email'));
+      v('pf-logradouro','pf-logradouro-error',!campoVazio('pf-logradouro'));
+      v('pf-numero','pf-numero-error',!campoVazio('pf-numero'));
+      v('pf-bairro','pf-bairro-error',!campoVazio('pf-bairro'));
+      v('pf-cidade','pf-cidade-error',!campoVazio('pf-cidade'));
+      v('pf-estado','pf-estado-error',!campoVazio('pf-estado'));
+    }
+    if (tipoSelecionado === 'pj') {
+      v('pj-razao','pj-razao-error',!campoVazio('pj-razao'));
+      v('pj-cnpj','pj-cnpj-error',cnpjValido('pj-cnpj'));
+      v('pj-fone','pj-fone-error',!campoVazio('pj-fone'));
+      v('pj-email','pj-email-error',emailValido('pj-email'));
+      v('pj-logradouro','pj-logradouro-error',!campoVazio('pj-logradouro'));
+      v('pj-numero','pj-numero-error',!campoVazio('pj-numero'));
+      v('pj-bairro','pj-bairro-error',!campoVazio('pj-bairro'));
+      v('pj-cidade','pj-cidade-error',!campoVazio('pj-cidade'));
+      v('pj-estado','pj-estado-error',!campoVazio('pj-estado'));
+      mostrarErro('pj-icms-error', !radioSelecionado('ICMS')); if(!radioSelecionado('ICMS')) ok = false;
+      mostrarErro('pj-destino-error', !radioSelecionado('Destino')); if(!radioSelecionado('Destino')) ok = false;
+    }
+    if (tipoSelecionado === 'pr') {
+      v('pr-nome','pr-nome-error',!campoVazio('pr-nome'));
+      v('pr-cpf','pr-cpf-error',cpfValido('pr-cpf'));
+      v('pr-ie','pr-ie-error',!campoVazio('pr-ie'));
+      v('pr-fone','pr-fone-error',!campoVazio('pr-fone'));
+      v('pr-email','pr-email-error',emailValido('pr-email'));
+      v('pr-logradouro','pr-logradouro-error',!campoVazio('pr-logradouro'));
+      v('pr-numero','pr-numero-error',!campoVazio('pr-numero'));
+      v('pr-bairro','pr-bairro-error',!campoVazio('pr-bairro'));
+      v('pr-cidade','pr-cidade-error',!campoVazio('pr-cidade'));
+      v('pr-estado','pr-estado-error',!campoVazio('pr-estado'));
+      mostrarErro('pr-destino-error', !radioSelecionado('Destino')); if(!radioSelecionado('Destino')) ok = false;
+    }
+    return ok;
+  }
+
+  // SUBMIT
+  document.getElementById('cadastro-form').addEventListener('submit', function(e) {
+    // Desabilita campos dos blocos ocultos para não poluir o e-mail
+    ['pf', 'pj', 'pr'].forEach(p => {
+      if (p !== tipoSelecionado) {
+        document.querySelectorAll(`#bloco-${p} input, #bloco-${p} select`).forEach(el => {
+          el.disabled = true;
+        });
+      }
+    });
+    document.getElementById('btn-enviar').disabled = true;
+    document.getElementById('btn-enviar').textContent = 'Enviando...';
+  });
+
+  function mostrarAlerta(msg, tipo) {
+    const box = document.getElementById('alert-box');
+    box.textContent = msg; box.className = `alert ${tipo}`;
+    window.scrollTo(0,0);
+    setTimeout(() => { box.className = 'alert'; }, 6000);
+  }
+</script>
+
+</body>
+</html>
