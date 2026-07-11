@@ -4,7 +4,7 @@ Formulário web de cadastro de clientes, desenvolvido originalmente para uso int
 
 O sistema foi criado pra resolver um problema real: substituir uma planilha de cadastro manual por um formulário público, validado e responsivo, que qualquer cliente pudesse preencher pelo celular — sem precisar de backend ou banco de dados próprio.
 
-**[Ver demonstração ao vivo](https://bruno0405.github.io/ficha-cadastral/)**
+**[Ver demonstração ao vivo](https://bruno0405.github.io/index.html/)**
 
 ---
 
